@@ -1,0 +1,123 @@
+a,a:hover {
+    color: rgba(255, 255, 255, 0.56);
+}
+
+.scrollbar::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+.scrollbar::-webkit-scrollbar
+{
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+.scrollbar::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+.edit-book-card {
+    margin: 5px;
+}
+
+.card {
+    border: 0;
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+.card-content {
+    padding: 8px;
+}
+
+.btn {
+    margin-bottom: 0;
+}
+
+.card .bmd-card-actions, .card .card-footer {
+    padding-bottom: 0 !important;
+}
+
+.bmd-layout-header {
+    background-color: #f5f5f5;
+    color: #757575;
+}
+
+.bmd-layout-header>.navbar {
+    min-height: 3.5rem;
+}
+
+@media (min-width: 992px) {
+    .bmd-layout-header>.navbar {
+        min-height: 4rem;
+    }
+}
+
+.bmd-layout-content {
+    padding-top: .5rem;
+    background-color: #f5f5f5;
+}
+
+.bmd-layout-drawer {
+    background-color: #37474f;
+    color: #eceff1;
+}
+
+.bmd-layout-drawer>header {
+    background-color: #263238;
+    height: 151px;
+}
+
+.bmd-layout-drawer>header .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    margin-bottom: 1rem;
+}
+
+.bmd-layout-drawer>header .account {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.bmd-layout-drawer>header .account .dropdown {
+    margin-left: auto;
+}
+
+.bmd-layout-drawer>header .account .dropdown .dropdown-menu {
+    font-size: .875rem;
+}
+
+.bmd-layout-drawer>header .account .dropdown .dropdown-menu .dropdown-item {
+    flex-wrap: nowrap;
+}
+
+.bmd-layout-drawer>.list-group .list-group-item {
+    color: rgba(255, 255, 255, 0.56);
+}
+
+.bmd-layout-drawer>.list-group .list-group-item:hover {
+    background-color: #00BCD4;
+    color: #37474F;
+}
+
+.bmd-layout-drawer>.list-group .list-group-item .material-icons {
+    color: #78909c;
+}
+
+/* Fix for modal on top of search results. Modal is z-index: 1050; */
+ul.ui-autocomplete {
+    z-index: 1100;
+}
+
+.alert-link {
+    color: #0044cf;
+}

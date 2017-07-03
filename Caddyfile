@@ -1,0 +1,13 @@
+http://www.192.168.168.202.xip.io:8080
+gzip
+minify
+log access.log
+
+fastcgi / 127.0.0.1:6545 php
+root C:\Users\kshimeld\Desktop\irp-book
+
+rewrite {
+    r .*
+    ext /
+    to /index.php?{query}
+}
