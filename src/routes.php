@@ -6,7 +6,8 @@ $app->get('/', function ($request, $response, $args) use($app) {
     $this->logger->info("Slim-Skeleton '/' route");
 
     // Render index view
-    return $this->view->render($response, 'index.html.twig', $args);
+    //return $this->view->render($response, 'index.html.twig', $args);
+    return $response->withStatus(302)->withHeader('Location', '/login');
 });
 
 // todo: web interface
@@ -24,16 +25,16 @@ $app->get('/login', function ($request, $response) use ($app) {
 
 $app->post('/login', function ($request, $response) use ($app) {
 
-    if ($app->session->get("logged_in")) {
-        return $app->redirect("/");
+    if ($this->session->get("logged_in")) {
+        return $response->withStatus(302)->withHeader('Location', '/');
     }
 
-    if ($app->request()->isPost()) {
-        $username = $app->request->post('username');
-        $password = $app->request->post('password');
+    if ($request->isPost()) {
+        $username = $request->post('username');
+        $password = $request->post('password');
         if (!isset($username) || !isset($password))  {
             $app->flash->addMessage('error', 'You did not fill out all the fields.');
-            return $app->render('login.twig', array('username' => $username));
+            return $app->render('login.html.twig', array('username' => $username));
         }
 
         $statement = $app->db->prepare('SELECT password, role FROM users WHERE username=:username');
@@ -47,13 +48,13 @@ $app->post('/login', function ($request, $response) use ($app) {
         if (!password_verify($password, $user["password"])) {
             $app->flash->addMessage("error", "Invalid username or password. Please try again.");
         } else {
-            $app->session->set("username", $username);
-            $app->session->set("logged_in", true);
+            $this->session->set("username", $username);
+            $this->session->set("logged_in", true);
             if ($user["role"] === 2)
                 $app->session->set("is_admin", true);
             else
                 $app->session->set("is_admin", false);
-            $app->redirect('/');
+            return $response->withStatus(302)->withHeader('Location', '/');
         }
     }
 

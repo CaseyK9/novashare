@@ -1,8 +1,6 @@
 <?php
 // DIC configuration
 
-use Sirius\Upload\Handler as UploadHandler;
-
 $container = $app->getContainer();
 
 $container['upload_directory'] = __DIR__ . '../public/uploads';
@@ -16,8 +14,6 @@ $container['view'] = function (\Slim\Container $c) {
     $view = new \Slim\Views\Twig($settings['template_path'], $settings['twig']);
     // Add extensions
     $view->addExtension(new Slim\Views\TwigExtension($c->get('router'), $c->get('request')->getUri()));
-    $view->addExtension(new Twig_Extension_Profiler($c['twig_profile']));
-    $view->addExtension(new Twig_Extension_Debug());
     return $view;
 };
 
@@ -28,7 +24,7 @@ $container['logger'] = function() {
     return $logger;
 };
 
-$container['session'] = function () {
+$container['session'] = function ($c) {
     return new \SlimSession\Helper;
 };
 

@@ -6,7 +6,7 @@
         "php": ">=5.5.0",
         "slim/slim": "^3.6",
         "monolog/monolog": "^1.22",
-        "zeuxisoo/slim-whoops": "0.5.*",
+        "zeuxisoo/slim-whoops": "0.6.*",
         "slim/twig-view": "^2.1",
         "slim/flash": "^0.2.0",
         "bryanjhv/slim-session": "~3.0",

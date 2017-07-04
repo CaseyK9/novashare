@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "470559b00d6fb0d3a37ef502ff8e86f6",
-    "content-hash": "61bd2fb24d784cdc0d6219493dc1d2c0",
+    "content-hash": "7d7af321843d9068e0a363d04b92cb16",
     "packages": [
         {
             "name": "bryanjhv/slim-session",
@@ -54,7 +53,7 @@
                 "session",
                 "slim"
             ],
-            "time": "2017-06-05 14:49:58"
+            "time": "2017-06-05T14:49:58+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -85,7 +84,7 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
-            "time": "2017-02-14 19:40:03"
+            "time": "2017-02-14T19:40:03+00:00"
         },
         {
             "name": "filp/whoops",
@@ -146,7 +145,7 @@
                 "whoops",
                 "zf2"
             ],
-            "time": "2017-06-03 18:33:07"
+            "time": "2017-06-03T18:33:07+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -224,7 +223,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2017-06-19 01:22:40"
+            "time": "2017-06-19T01:22:40+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -267,7 +266,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2017-01-19 11:35:12"
+            "time": "2017-01-19T11:35:12+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -315,29 +314,33 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2017-03-13 16:27:32"
+            "time": "2017-03-13T16:27:32+00:00"
         },
         {
             "name": "pimple/pimple",
-            "version": "v3.0.2",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silexphp/Pimple.git",
-                "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a"
+                "reference": "279b56046fb368deacf77e2f8f3bdcea45cc367a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/a30f7d6e57565a2e1a316e1baf2a483f788b258a",
-                "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a",
+                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/279b56046fb368deacf77e2f8f3bdcea45cc367a",
+                "reference": "279b56046fb368deacf77e2f8f3bdcea45cc367a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.3.0",
+                "psr/container": "^1.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "3.1.x-dev"
                 }
             },
             "autoload": {
@@ -361,7 +364,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2015-09-11 15:10:35"
+            "time": "2017-07-03T14:06:46+00:00"
         },
         {
             "name": "psr/container",
@@ -410,7 +413,7 @@
                 "container-interop",
                 "psr"
             ],
-            "time": "2017-02-14 16:28:37"
+            "time": "2017-02-14T16:28:37+00:00"
         },
         {
             "name": "psr/http-message",
@@ -460,7 +463,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06 14:39:51"
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "psr/log",
@@ -507,7 +510,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "siriusphp/upload",
@@ -557,7 +560,7 @@
                 "upload",
                 "validation"
             ],
-            "time": "2016-03-31 13:47:45"
+            "time": "2016-03-31T13:47:45+00:00"
         },
         {
             "name": "siriusphp/validation",
@@ -603,7 +606,7 @@
                 "security",
                 "validation"
             ],
-            "time": "2017-03-07 16:35:59"
+            "time": "2017-03-07T16:35:59+00:00"
         },
         {
             "name": "slim/flash",
@@ -651,7 +654,7 @@
                 "provider",
                 "slim"
             ],
-            "time": "2016-11-11 16:29:19"
+            "time": "2016-11-11T16:29:19+00:00"
         },
         {
             "name": "slim/slim",
@@ -722,7 +725,7 @@
                 "micro",
                 "router"
             ],
-            "time": "2017-03-19 17:55:20"
+            "time": "2017-03-19T17:55:20+00:00"
         },
         {
             "name": "slim/twig-view",
@@ -772,7 +775,7 @@
                 "twig",
                 "view"
             ],
-            "time": "2017-01-25 20:38:39"
+            "time": "2017-01-25T20:38:39+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -831,7 +834,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-09 14:24:12"
+            "time": "2017-06-09T14:24:12+00:00"
         },
         {
             "name": "twig/twig",
@@ -897,20 +900,20 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-06-07 18:47:58"
+            "time": "2017-06-07T18:47:58+00:00"
         },
         {
             "name": "zeuxisoo/slim-whoops",
-            "version": "0.5.2",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zeuxisoo/php-slim-whoops.git",
-                "reference": "888bf2f6403ee9d7fac22fe52a8b4baacea72ef6"
+                "reference": "f97a23cf20119119df675406a1eae1e0f7f85ca2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zeuxisoo/php-slim-whoops/zipball/888bf2f6403ee9d7fac22fe52a8b4baacea72ef6",
-                "reference": "888bf2f6403ee9d7fac22fe52a8b4baacea72ef6",
+                "url": "https://api.github.com/repos/zeuxisoo/php-slim-whoops/zipball/f97a23cf20119119df675406a1eae1e0f7f85ca2",
+                "reference": "f97a23cf20119119df675406a1eae1e0f7f85ca2",
                 "shasum": ""
             },
             "require": {
@@ -919,8 +922,8 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "4.8.*",
-                "slim/slim": "3.6.*",
-                "slim/twig-view": "2.1.*"
+                "slim/slim": "3.8.*",
+                "slim/twig-view": "2.2.*"
             },
             "type": "library",
             "autoload": {
@@ -948,7 +951,7 @@
                 "slim",
                 "whoops"
             ],
-            "time": "2017-01-09 05:24:59"
+            "time": "2017-03-23T02:42:19+00:00"
         }
     ],
     "packages-dev": [],
