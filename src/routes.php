@@ -6,7 +6,11 @@ $app->get('/', function ($request, $response, $args) use($app) {
     $this->logger->info("Slim-Skeleton '/' route");
 
     // Render index view
-    //return $this->view->render($response, 'index.html.twig', $args);
+    if ($this->session->get("logged_in")) return $this->view->render($response, 'index.html.twig', array(
+        "logged_in" => $this->session->get("logged_in"),
+        "username" => $this->session->get("username"),
+        "is_admin" => $this->session->get("is_admin")
+    ));
     return $response->withStatus(302)->withHeader('Location', '/login');
 });
 
@@ -18,7 +22,7 @@ $app->get('/', function ($request, $response, $args) use($app) {
 
 $app->get('/login', function ($request, $response) use ($app) {
 
-    if ($this->session->get("logged_in")) $this->redirect("/");
+    if ($this->session->get("logged_in")) return $response->withStatus(302)->withHeader('Location', '/');
 
     return $this->view->render($response, 'login.html.twig', array());
 });
@@ -30,18 +34,18 @@ $app->post('/login', function ($request, $response) use ($app) {
     }
 
     if ($request->isPost()) {
-        $username = $request->post('username');
-        $password = $request->post('password');
+        $username = $request->getParam('username');
+        $password = $request->getParam('password');
         if (!isset($username) || !isset($password))  {
             $app->flash->addMessage('error', 'You did not fill out all the fields.');
             return $app->render('login.html.twig', array('username' => $username));
         }
 
-        $statement = $app->db->prepare('SELECT password, role FROM users WHERE username=:username');
+        $statement = $this->db->prepare('SELECT password, role FROM users WHERE username=:username');
         $statement->execute(array('username' => $username));
-        $user = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
 
-        if ($user->rowCount() === 0) {
+        if ($statement->rowCount() === 0) {
             $app->flash->addMessage("error", "Invalid username or password. Please try again.");
         }
 
@@ -50,10 +54,10 @@ $app->post('/login', function ($request, $response) use ($app) {
         } else {
             $this->session->set("username", $username);
             $this->session->set("logged_in", true);
-            if ($user["role"] === 2)
-                $app->session->set("is_admin", true);
+            if ($user["role"] == 2)
+                $this->session->set("is_admin", true);
             else
-                $app->session->set("is_admin", false);
+                $this->session->set("is_admin", false);
             return $response->withStatus(302)->withHeader('Location', '/');
         }
     }
