@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS `images`(
   `id` INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `file_name` TEXT NOT NULL,
-  `date_uploaded` DATE NOT NULL,
+  `date_uploaded` DATETIME NOT NULL,
   `uploader` INTEGER NOT NULL,
   FOREIGN KEY (uploader) REFERENCES users(id)
 );

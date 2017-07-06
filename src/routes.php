@@ -6,19 +6,55 @@ $app->get('/', function ($request, $response, $args) use($app) {
     $this->logger->info("Slim-Skeleton '/' route");
 
     // Render index view
-    if ($this->session->get("logged_in")) return $this->view->render($response, 'index.html.twig', array(
-        "logged_in" => $this->session->get("logged_in"),
-        "username" => $this->session->get("username"),
-        "is_admin" => $this->session->get("is_admin")
-    ));
+    if ($this->session->get("logged_in")) {
+        $statement = $this->db->prepare('SELECT file_name FROM images WHERE uploader=:userid');
+        $statement->execute(array('userid' => $this->session->get("userid")));
+        $images = $statement->fetchAll(PDO::FETCH_COLUMN);
+
+        return $this->view->render($response, 'index.html.twig', array(
+            "logged_in" => $this->session->get("logged_in"),
+            "username" => $this->session->get("username"),
+            "is_admin" => $this->session->get("is_admin"),
+            "images" => $images
+        ));
+    }
     return $response->withStatus(302)->withHeader('Location', '/login');
 });
 
-// todo: web interface
+$app->get('/user/resetkey', function ($request, $response, $args) use ($app) {
+    if ($this->session->get('logged_in')) {
+        $newkey = $this->keygen;
+        $statement = $this->db->prepare('UPDATE users SET apikey=:newkey WHERE id=:userid');
+        $statement->execute(array('userid' => $this->session->get("userid"), "newkey" => $newkey));
+        return $response->write($newkey);
+    } else {
+        return $response->write("Not allowed to access this resource.");
+    }
+});
+
+$app->get('/user/apikey', function ($request, $response, $args) use ($app) {
+    if ($this->session->get('logged_in')) {
+        $statement = $this->db->prepare('SELECT apikey FROM users WHERE id=:userid');
+        $statement->execute(array('userid' => $this->session->get("userid")));
+        $results = $statement->fetch(PDO::FETCH_ASSOC);
+        return $response->write($results['apikey']);
+    } else {
+        return $response->write("Not allowed to access this resource.");
+    }
+});
+
+$app->get('/user/changepass', function ($request, $response, $args) use ($app) {
+    if ($this->session->get('logged_in')) {
+        $params = $request->getQueryParams();
+
+        $statement = $this->db->prepare('UPDATE users SET password=:newpass WHERE id=:userid');
+        $statement->execute(array('userid' => $this->session->get("userid"), "newpass" => password_hash($params['password'])));
+    } else {
+        return $response->write("Not allowed to access this resource.");
+    }
+});
+
 // todo: change password
-// todo: reset password
-// todo: change apikey
-// todo: profile page with their uploaded pictures
 
 $app->get('/login', function ($request, $response) use ($app) {
 
@@ -41,7 +77,7 @@ $app->post('/login', function ($request, $response) use ($app) {
             return $app->render('login.html.twig', array('username' => $username));
         }
 
-        $statement = $this->db->prepare('SELECT password, role FROM users WHERE username=:username');
+        $statement = $this->db->prepare('SELECT id, password, role FROM users WHERE username=:username');
         $statement->execute(array('username' => $username));
         $user = $statement->fetch(PDO::FETCH_ASSOC);
 
@@ -54,6 +90,7 @@ $app->post('/login', function ($request, $response) use ($app) {
         } else {
             $this->session->set("username", $username);
             $this->session->set("logged_in", true);
+            $this->session->set("userid", $user["id"]);
             if ($user["role"] == 2)
                 $this->session->set("is_admin", true);
             else
@@ -65,24 +102,67 @@ $app->post('/login', function ($request, $response) use ($app) {
     return $app->render('login.twig', array('username' => $username));
 });
 
-$app->get('/logout', function () use ($app) {
-    $app->session->pop();
-    $app->redirect('/');
+$app->get('/register', function ($request, $response) use ($app) {
+
+    if ($this->session->get("logged_in")) return $response->withStatus(302)->withHeader('Location', '/');
+
+    return $this->view->render($response, 'register.html.twig', array());
+});
+
+$app->post('/register', function ($request, $response) use ($app) {
+
+    if ($this->session->get("logged_in")) {
+        return $response->withStatus(302)->withHeader('Location', '/');
+    }
+
+    if ($request->isPost()) {
+        $username = $request->getParam('username');
+        $email = $request->getParam('email');
+        $password = $request->getParam('password');
+        $confirmpass = $request->getParam('confirmpass');
+        if (!isset($username) || !isset($password) || !isset($email) || !isset($confirmpass))  {
+            $app->flash->addMessage('error', 'You did not fill out all the fields.');
+            return $app->render('login.html.twig', array('username' => $username, "email" => $email));
+        }
+
+        $statement = $this->db->prepare('INSERT INTO users (username, email, role, password, apikey) VALUES (:username, :email, 1, :password, :apikey)');
+        $statement->execute(array(
+            'username' => $username,
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'apikey' => $this->keygen
+        ));
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($statement->rowCount() === 0) {
+            $app->flash->addMessage("error", "Invalid username or password. Please try again.");
+        }
+
+        $this->flash->addMessage("success", "Successfully created an account. You can now log in.");
+        return $response->withStatus(302)->withHeader('Location', '/login');
+    }
+
+    return $app->render('register.twig.html', array());
+});
+
+$app->get('/logout', function ($request, $response) use ($app) {
+    $this->session->destroy();
+    return $response->withStatus(302)->withHeader('Location', '/');
 });
 
 $app->post('/uploader', function (\Slim\Http\Request $request, $response, $args) use ($app) {
 
-    $apikey = $app->request->post('apikey');
+    $apikey = $request->getParam('apikey');
 
-    $statement = $app->db->prepare('SELECT id FROM users WHERE apikey=:apikey');
+    $statement = $this->db->prepare('SELECT id FROM users WHERE apikey=:apikey');
     $statement->execute(array('apikey' => $apikey));
-    $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $users = $statement->fetch(PDO::FETCH_ASSOC);
 
-    if ($users->rowCount() === 0) {
-        return $response->withJson(array("error" => "Not allowed to upload, invalid apikey"), 403);
+    if ($statement->rowCount() === 0) {
+        return $response->withJson(array("error" => "Invalid apikey, check your settings."), 403);
     }
 
-    $directory = $this->get('upload_directory');
+    $directory = __DIR__ . DIRECTORY_SEPARATOR .  ".." . DIRECTORY_SEPARATOR . "public" . DIRECTORY_SEPARATOR . "uploads";
 
     $uploadedFiles = $request->getUploadedFiles();
 
@@ -93,14 +173,14 @@ $app->post('/uploader', function (\Slim\Http\Request $request, $response, $args)
         $basename = bin2hex(random_bytes(12)); // see http://php.net/manual/en/function.random-bytes.php
         $filename = sprintf('%s.%0.12s', $basename, $extension);
 
-        $statement = $app->db->prepare('INSERT INTO images(file_name, date_uploaded, uploader) VALUES (:filename, NOW(), :uploaderId)');
+        $statement = $this->db->prepare('INSERT INTO images(file_name, date_uploaded, uploader) VALUES (:filename, NOW(), :uploaderId)');
         $statement->execute(array(
             'filename' => $filename,
-            'uploaderId' => $users[0]
+            'uploaderId' => $users["id"]
         ));
 
         $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
-        $response->write("http://$_SERVER[HTTP_HOST]/upload/$filename");
+        $response->write("http://$_SERVER[HTTP_HOST]/uploads/$filename");
     } else {
         $response->withJson(array("error"=>"Failed to upload, check server logs."), 500);
     }
