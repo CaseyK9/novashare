@@ -43,6 +43,26 @@ $app->get('/user/apikey', function ($request, $response, $args) use ($app) {
     }
 });
 
+$app->get('/user/sharex', function ($request, $response, $args) use ($app) {
+    if ($this->session->get('logged_in')) {
+        $statement = $this->db->prepare('SELECT apikey FROM users WHERE id=:userid');
+        $statement->execute(array('userid' => $this->session->get("userid")));
+        $results = $statement->fetch(PDO::FETCH_ASSOC);
+        $sharex = '{"Name": "NovaShare","DestinationType": "None",  "RequestType": "POST","RequestURL": "http://novacraft.me/share/uploader","FileFormName": "image","Arguments": {"apikey": "' . $results['apikey'] . '"},"ResponseType": "Text"}"';
+        return $response->withHeader('Content-Type', 'application/force-download')
+                        ->withHeader('Content-Type', 'application/octet-stream')
+                        ->withHeader('Content-Type', 'application/download')
+                        ->withHeader('Content-Description', 'File Transfer')
+                        ->withHeader('Content-Disposition', 'attachment; filename="novashare.sxcu"')
+                        ->withHeader('Expires', '0')
+                        ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+                        ->withHeader('Pragma', 'public')
+                        ->write($sharex);
+    } else {
+        return $response->write("Not allowed to access this resource.");
+    }
+});
+
 $app->get('/user/changepass', function ($request, $response, $args) use ($app) {
     if ($this->session->get('logged_in')) {
         $params = $request->getQueryParams();
@@ -126,16 +146,17 @@ $app->post('/register', function ($request, $response) use ($app) {
         }
 
         $statement = $this->db->prepare('INSERT INTO users (username, email, role, password, apikey) VALUES (:username, :email, 1, :password, :apikey)');
-        $statement->execute(array(
-            'username' => $username,
-            'email' => $email,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
-            'apikey' => $this->keygen
-        ));
-        $user = $statement->fetch(PDO::FETCH_ASSOC);
-
-        if ($statement->rowCount() === 0) {
-            $app->flash->addMessage("error", "Invalid username or password. Please try again.");
+        try {
+            $statement->execute(array(
+                'username' => $username,
+                'email' => $email,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'apikey' => $this->keygen
+            ));
+        } catch (\PDOException $e) {
+            if ($e->errorInfo[1] == 1062) {
+                $this->flash->addMessage("error", "A user with that username or email already exists.");
+            }
         }
 
         $this->flash->addMessage("success", "Successfully created an account. You can now log in.");
