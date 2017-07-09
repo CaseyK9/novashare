@@ -3,6 +3,8 @@
 
 $container = $app->getContainer();
 
+$container['prefix'] = "/share";
+
 $container['upload_directory'] = __DIR__ . '../public/uploads';
 
 $container['keygen'] = function () {
@@ -18,6 +20,8 @@ $container['view'] = function (\Slim\Container $c) {
     ];
     // Add extensions
     $view->addExtension(new Slim\Views\TwigExtension($c->get('router'), $c->get('request')->getUri()));
+    // add global
+    $view->offsetSet('prefix', "/share");
     return $view;
 };
 

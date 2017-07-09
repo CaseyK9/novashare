@@ -1,7 +1,7 @@
 <?php
 // Routes
 
-$app->get('/', function ($request, $response, $args) use($app) {
+$app->get($app->prefix.'/', function ($request, $response, $args) use($app) {
     // Sample log message
     $this->logger->info("Slim-Skeleton '/' route");
 
@@ -21,7 +21,7 @@ $app->get('/', function ($request, $response, $args) use($app) {
     return $response->withStatus(302)->withHeader('Location', '/login');
 });
 
-$app->get('/user/resetkey', function ($request, $response, $args) use ($app) {
+$app->get($app->prefix.'/user/resetkey', function ($request, $response, $args) use ($app) {
     if ($this->session->get('logged_in')) {
         $newkey = $this->keygen;
         $statement = $this->db->prepare('UPDATE users SET apikey=:newkey WHERE id=:userid');
@@ -32,7 +32,7 @@ $app->get('/user/resetkey', function ($request, $response, $args) use ($app) {
     }
 });
 
-$app->get('/user/apikey', function ($request, $response, $args) use ($app) {
+$app->get($app->prefix.'/user/apikey', function ($request, $response, $args) use ($app) {
     if ($this->session->get('logged_in')) {
         $statement = $this->db->prepare('SELECT apikey FROM users WHERE id=:userid');
         $statement->execute(array('userid' => $this->session->get("userid")));
@@ -43,7 +43,7 @@ $app->get('/user/apikey', function ($request, $response, $args) use ($app) {
     }
 });
 
-$app->get('/user/sharex', function ($request, $response, $args) use ($app) {
+$app->get($app->prefix.'/user/sharex', function ($request, $response, $args) use ($app) {
     if ($this->session->get('logged_in')) {
         $statement = $this->db->prepare('SELECT apikey FROM users WHERE id=:userid');
         $statement->execute(array('userid' => $this->session->get("userid")));
@@ -63,7 +63,7 @@ $app->get('/user/sharex', function ($request, $response, $args) use ($app) {
     }
 });
 
-$app->get('/user/changepass', function ($request, $response, $args) use ($app) {
+$app->get($app->prefix.'/user/changepass', function ($request, $response, $args) use ($app) {
     if ($this->session->get('logged_in')) {
         $params = $request->getQueryParams();
 
@@ -76,17 +76,17 @@ $app->get('/user/changepass', function ($request, $response, $args) use ($app) {
 
 // todo: change password
 
-$app->get('/login', function ($request, $response) use ($app) {
+$app->get($app->prefix.'/login', function ($request, $response) use ($app) {
 
-    if ($this->session->get("logged_in")) return $response->withStatus(302)->withHeader('Location', '/');
+    if ($this->session->get("logged_in")) return $response->withStatus(302)->withHeader('Location', $prefix.'/');
 
     return $this->view->render($response, 'login.html.twig', array());
 });
 
-$app->post('/login', function ($request, $response) use ($app) {
+$app->post($app->prefix.'/login', function ($request, $response) use ($app) {
 
     if ($this->session->get("logged_in")) {
-        return $response->withStatus(302)->withHeader('Location', '/');
+        return $response->withStatus(302)->withHeader('Location', $this->prefix.'/');
     }
 
     if ($request->isPost()) {
@@ -115,24 +115,24 @@ $app->post('/login', function ($request, $response) use ($app) {
                 $this->session->set("is_admin", true);
             else
                 $this->session->set("is_admin", false);
-            return $response->withStatus(302)->withHeader('Location', '/');
+            return $response->withStatus(302)->withHeader('Location', $this->prefix.'/');
         }
     }
 
     return $app->render('login.twig', array('username' => $username));
 });
 
-$app->get('/register', function ($request, $response) use ($app) {
+$app->get($app->prefix.'/register', function ($request, $response) use ($app) {
 
-    if ($this->session->get("logged_in")) return $response->withStatus(302)->withHeader('Location', '/');
+    if ($this->session->get("logged_in")) return $response->withStatus(302)->withHeader('Location', $this->prefix.'/');
 
     return $this->view->render($response, 'register.html.twig', array());
 });
 
-$app->post('/register', function ($request, $response) use ($app) {
+$app->post($app->prefix.'/register', function ($request, $response) use ($app) {
 
     if ($this->session->get("logged_in")) {
-        return $response->withStatus(302)->withHeader('Location', '/');
+        return $response->withStatus(302)->withHeader('Location', $this->prefix.'/');
     }
 
     if ($request->isPost()) {
@@ -160,18 +160,18 @@ $app->post('/register', function ($request, $response) use ($app) {
         }
 
         $this->flash->addMessage("success", "Successfully created an account. You can now log in.");
-        return $response->withStatus(302)->withHeader('Location', '/login');
+        return $response->withStatus(302)->withHeader('Location', $this->prefix.'/login');
     }
 
     return $app->render('register.twig.html', array());
 });
 
-$app->get('/logout', function ($request, $response) use ($app) {
+$app->get($app->prefix.'/logout', function ($request, $response) use ($app) {
     $this->session->destroy();
     return $response->withStatus(302)->withHeader('Location', '/');
 });
 
-$app->post('/uploader', function (\Slim\Http\Request $request, $response, $args) use ($app) {
+$app->post($app->prefix.'/uploader', function (\Slim\Http\Request $request, $response, $args) use ($app) {
 
     $apikey = $request->getParam('apikey');
 
